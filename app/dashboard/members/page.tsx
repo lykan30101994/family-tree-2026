@@ -14,6 +14,9 @@ export default async function FamilyTreePage({ searchParams }: PageProps) {
   const initialView = view as ViewMode | undefined;
   const initialShowAvatar = avatar !== "hide";
 
+  const profile = await getProfile();
+  const canEdit = profile?.role === "admin" || profile?.role === "editor";
+  
   // Fetch data without login check
   const supabase = await getSupabase();
 
@@ -62,7 +65,7 @@ export default async function FamilyTreePage({ searchParams }: PageProps) {
       <DashboardViews
         persons={persons}
         relationships={relationships}
-        canEdit={false}
+        canEdit={canEdit}
       />
 
       <MemberDetailModal />
