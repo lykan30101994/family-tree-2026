@@ -5,6 +5,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
 export async function updateSession(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-current-path", request.nextUrl.pathname);
   // If env vars are missing, we cannot create a supabase client
   if (!supabaseUrl || !supabaseKey) {
     if (request.nextUrl.pathname !== "/missing-db-config") {
@@ -16,7 +18,9 @@ export async function updateSession(request: NextRequest) {
   }
 
   let supabaseResponse = NextResponse.next({
-    request,
+    request: {
+      headers: requestHeaders,
+    },
   });
 
   const supabase = createServerClient(supabaseUrl!, supabaseKey!, {
@@ -29,7 +33,9 @@ export async function updateSession(request: NextRequest) {
           request.cookies.set(name, value),
         );
         supabaseResponse = NextResponse.next({
-          request,
+          request: {
+            headers: requestHeaders,
+          },
         });
         cookiesToSet.forEach(({ name, value, options }) =>
           supabaseResponse.cookies.set(name, value, options),
@@ -52,6 +58,7 @@ export async function updateSession(request: NextRequest) {
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
+  const isMembersPath = request.nextUrl.pathname.startsWith("/dashboard/members");
 
   const isLoginPage = request.nextUrl.pathname.startsWith("/login");
 
@@ -72,7 +79,7 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  if (isProtectedPath && !user) {
+  if (isProtectedPath && !user && !isMembersPath) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/login";

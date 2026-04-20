@@ -1,35 +1,6 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
-import {
-  ArrowRight,
-  Network,
-  ShieldCheck,
-  Sparkles,
-  Users,
-} from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-const fadeIn: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
-  },
-};
-
-const staggerContainer: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-};
 
 interface LandingHeroProps {
   siteName: string;
@@ -39,27 +10,34 @@ export default function LandingHero({ siteName }: LandingHeroProps) {
   const router = useRouter();
 
   return (
-    <div className="w-[1280px] h-screen max-h-[90vh] mx-auto flex flex-col bg-white p-5">
+    <div className="w-full max-w-7xl mx-auto flex flex-col bg-white p-3 sm:p-4 lg:p-5">
       {/* Title Section */}
-      <div className="w-full bg-[#f9e7c3] border border-black text-center py-4">
-        <h1 className="text-4xl font-serif font-bold text-black">GIA PHẢ HỌ NGUYỄN</h1>
-        <p className="text-lg text-black mt-2">LÀNG NẠI CỬU, XÃ TRIỆU PHONG, TỈNH QUẢNG TRỊ</p>
+      <div className="w-full bg-[#f9e7c3] border border-black text-center py-3 sm:py-4 px-3 sm:px-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-black">
+          {siteName.toUpperCase()}
+        </h1>
+        <p className="text-sm sm:text-base lg:text-lg text-black mt-1.5 sm:mt-2">
+          LÀNG NẠI CỬU, XÃ TRIỆU PHONG, TỈNH QUẢNG TRỊ
+        </p>
       </div>
 
-      <div className="flex flex-row flex-1">
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 mt-3 sm:mt-4">
         {/* Buttons Section */}
-        <div className="flex flex-col justify-top items-center w-1/4 space-y-4 p-4">
-          <button className="w-full h-16 border border-black text-lg font-bold bg-white hover:bg-gray-100">
+        <div className="w-full lg:w-1/4 flex flex-col gap-3 sm:gap-4">
+          <button
+            className="w-full h-12 sm:h-14 lg:h-16 border border-black text-sm sm:text-base lg:text-lg font-bold bg-white hover:bg-gray-100 transition-colors"
+            onClick={() => router.push("/about-lineage")}
+          >
             THÔNG TIN HỌ NGUYỄN
           </button>
-          <button 
-            className="w-full h-16 border border-black text-lg font-bold bg-white hover:bg-gray-100"
+          <button
+            className="w-full h-12 sm:h-14 lg:h-16 border border-black text-sm sm:text-base lg:text-lg font-bold bg-white hover:bg-gray-100 transition-colors"
             onClick={() => router.push("/dashboard/members")}
           >
             TRA CỨU GIA PHẢ
           </button>
-          <button 
-            className="w-full h-16 border border-black text-lg font-bold bg-white hover:bg-gray-100"
+          <button
+            className="w-full h-12 sm:h-14 lg:h-16 border border-black text-sm sm:text-base lg:text-lg font-bold bg-white hover:bg-gray-100 transition-colors"
             onClick={() => router.push("/login")}
           >
             ĐĂNG NHẬP CHỈNH SỬA
@@ -67,12 +45,12 @@ export default function LandingHero({ siteName }: LandingHeroProps) {
         </div>
 
         {/* Image Section */}
-        <div className="flex-1 flex items-center p-1">
-          <div className="w-full">
+        <div className="w-full lg:flex-1">
+          <div className="w-full border border-black overflow-hidden">
             <img
               src="/avatar/v0/honguyen.jpg"
               alt="Nhà thờ họ Nguyễn"
-              className="w-full h-full object-cover"
+              className="w-full h-[240px] sm:h-[320px] md:h-[420px] lg:h-[560px] object-cover"
             />
           </div>
         </div>

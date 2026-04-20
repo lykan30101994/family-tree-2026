@@ -192,7 +192,8 @@ CREATE POLICY "Admins can view all profiles" ON public.profiles FOR SELECT USING
 
 -- PERSONS POLICIES
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.persons;
-CREATE POLICY "Enable read access for authenticated users" ON public.persons FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "Enable read access for anon and authenticated users" ON public.persons;
+CREATE POLICY "Enable read access for anon and authenticated users" ON public.persons FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Admins can manage persons" ON public.persons;
 DROP POLICY IF EXISTS "Admins can insert persons" ON public.persons;
@@ -212,7 +213,8 @@ CREATE POLICY "Admins can manage private details" ON public.person_details_priva
 
 -- RELATIONSHIPS POLICIES
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.relationships;
-CREATE POLICY "Enable read access for authenticated users" ON public.relationships FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "Enable read access for anon and authenticated users" ON public.relationships;
+CREATE POLICY "Enable read access for anon and authenticated users" ON public.relationships FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Admins can manage relationships" ON public.relationships;
 DROP POLICY IF EXISTS "Admins can insert relationships" ON public.relationships;
