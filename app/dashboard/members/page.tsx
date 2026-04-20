@@ -16,11 +16,8 @@ export default async function FamilyTreePage({ searchParams }: PageProps) {
 
   const profile = await getProfile();
   const canEdit = profile?.role === "admin" || profile?.role === "editor";
-
-  // If view is list, we only need persons, not relationships.
-  // We fetch persons for all views to pass down as a prop if we want, or let components fetch.
-  // Actually, to make transitions fast and avoid duplicate fetching across components,
-  // we will fetch data here and pass it down as props.
+  
+  // Fetch data without login check
   const supabase = await getSupabase();
 
   const [personsRes, relsRes] = await Promise.all([

@@ -16,10 +16,12 @@ export default async function DashboardLayout({
 }) {
   const requestHeaders = await headers();
   const pathname = requestHeaders.get("x-current-path") || "";
-  const isPublicMembersPath = pathname.startsWith("/dashboard/members");
+  const isViewerMembersPath = pathname.startsWith("/dashboard/members");
   const user = await getUser();
 
-  if (!user && !isPublicMembersPath) {
+  console.log("User in layout:", user);
+  console.log("Current path in layout:", pathname);
+  if (!user && !isViewerMembersPath) {
     redirect("/login");
   }
 
@@ -81,20 +83,7 @@ export default async function DashboardLayout({
   return (
     <UserProvider user={user} profile={profile}>
       <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
-        {!user && isPublicMembersPath ? (
-          <header className="sticky top-0 z-30 bg-white/80 border-b border-stone-200 shadow-sm transition-all duration-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-stone-700 bg-white border border-stone-200 rounded-full hover:text-amber-700 hover:bg-amber-50 hover:border-amber-200 transition-colors"
-              >
-                Quay về trang chủ
-              </Link>
-            </div>
-          </header>
-        ) : (
-          <DashboardHeader />
-        )}
+        <DashboardHeader />
         {children}
         <Footer
           className="mt-auto bg-white border-t border-stone-200"
