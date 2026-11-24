@@ -11,10 +11,24 @@ on:
     - cron: "0 3 */3 * *" # 03:00 UTC, mỗi 3 ngày
   workflow_dispatch:
 
+permissions:
+  actions: write # cho phép workflow tự bật lại chính nó
+
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      # GitHub tự tắt workflow theo lịch nếu repo không có hoạt động trong 60 ngày.
+      # Gọi API "enable" mỗi lần chạy để đặt lại bộ đếm 60 ngày (không tạo commit).
+      - name: Keep GitHub workflow enabled
+        continue-on-error: true # lỗi ở bước này không được chặn bước ping Supabase
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X PUT \
+            "repos/${{ github.repository }}/actions/workflows/supabase-keepalive.yml/enable" \
+            && echo "Workflow re-enabled (60-day timer reset)"
+
       - name: Query database via REST API
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -30,8 +44,10 @@ jobs:
             -H "Authorization: Bearer $SUPABASE_KEY")
           echo "HTTP status: $status"
           cat response.txt; echo
-          # 2xx/4xx đều có nghĩa là request đã chạm tới database (kể cả bị RLS chặn).
-          # Chỉ fail khi lỗi server/kết nối (5xx hoặc 000).
-          if [ "$status" = "000" ] || [ "$status" -ge 500 ]; then
+          # Chỉ 2xx mới chắc chắn request đã chạm tới database
+          # (bảng bị RLS chặn vẫn trả về 200 với []).
+          # 401/403 (sai key), 404 (sai URL/bảng), 5xx, 000 (mất kết nối) => fail để GitHub gửi email báo lỗi.
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "Keep-alive FAILED: database was not reached" >&2
             exit 1
           fi
